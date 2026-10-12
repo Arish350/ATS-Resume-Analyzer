@@ -1,29 +1,48 @@
+
 import os
 import mysql.connector
+from mysql.connector import Error
 
 
 def get_connection():
+    required_vars = [
+        "MYSQL_HOST",
+        "MYSQL_USER",
+        "MYSQL_PASSWORD",
+        "MYSQL_DATABASE",
+    ]
 
-    connection = mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST", "localhost"),
-        user=os.getenv("MYSQL_USER", "root"),
-        password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE", "ats_resume_db"),
-        port=int(os.getenv("MYSQL_PORT", "3306"))
+    missing = [
+        name for name in required_vars
+        if not os.getenv(name)
+    ]
+
+    if missing:
+        raise RuntimeError(
+            "Missing database environment variables: "
+            + ", ".join(missing)
+        )
+
+    return mysql.connector.connect(
+        host=os.getenv("MYSQL_HOST"),
+        port=int(os.getenv("MYSQL_PORT", "3306")),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("Arish18092024"),
+        database=os.getenv("MYSQL_DATABASE"),
+        connection_timeout=10,
     )
-
-    return connection
 
 
 if __name__ == "__main__":
+    connection = None
 
     try:
         connection = get_connection()
+        print("MySQL Connected Successfully!")
 
-        if connection.is_connected():
-            print("MySQL Connected Successfully!")
-
-        connection.close()
-
-    except mysql.connector.Error as error:
+    except (Error, RuntimeError, ValueError) as error:
         print("MySQL Connection Error:", error)
+
+    finally:
+        if connection is not None and connection.is_connected():
+            connection.close()
