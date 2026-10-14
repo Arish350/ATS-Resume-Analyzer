@@ -1,3 +1,5 @@
 Flask
-gunicorn
+PyPDF2
 mysql-connector-python
+gunicorn
+python-dotenv

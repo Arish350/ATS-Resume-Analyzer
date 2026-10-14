@@ -1,4 +1,8 @@
+
+.env
+dotenv.env
 __pycache__/
 *.pyc
 uploads/
-.env
+.venv/
+venv/
